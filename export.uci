@@ -1,0 +1,771 @@
+package autoupdater
+
+config branch 'stable'
+	list mirror 'http://autoupdate.ffkbu.de/koeln/stable/sysupgrade'
+	option good_signatures '2'
+	option name 'stable'
+	list pubkey 'ff5159fa7ea80070150f21dfc9d7048d77732c4c2143b6131b6cefff70c13a28'
+	list pubkey '1c38f1cb1d3900ad053519d7e2b689bb8ae2e59ff72a9e571d4bb559dada3e7a'
+	list pubkey '7948cea2d21d94bcf59ef5be2dc248de7d7b828b82993bde1758876560c12c27'
+
+config branch 'beta'
+	list mirror 'http://autoupdate.ffkbu.de/koeln/beta/sysupgrade'
+	option good_signatures '1'
+	option name 'beta'
+	list pubkey 'ff5159fa7ea80070150f21dfc9d7048d77732c4c2143b6131b6cefff70c13a28'
+	list pubkey '1c38f1cb1d3900ad053519d7e2b689bb8ae2e59ff72a9e571d4bb559dada3e7a'
+	list pubkey '7948cea2d21d94bcf59ef5be2dc248de7d7b828b82993bde1758876560c12c27'
+
+config autoupdater 'settings'
+	option enabled '0'
+	option branch 'stable'
+	option version_file '/lib/gluon/release'
+
+package batman-adv
+
+config mesh 'bat0'
+	option gw_mode 'client'
+	option orig_interval '5000'
+	option hop_penalty '15'
+	option multicast_mode '0'
+
+package dhcp
+
+config dnsmasq
+	option domainneeded '1'
+	option filterwin2k '0'
+	option rebind_localhost '1'
+	option local '/lan/'
+	option domain 'lan'
+	option expandhosts '1'
+	option nonegcache '0'
+	option authoritative '1'
+	option readethers '1'
+	option leasefile '/tmp/dhcp.leases'
+	option resolvfile '/tmp/resolv.conf.auto'
+	option localservice '1'
+	option boguspriv '0'
+	option localise_queries '0'
+	option rebind_protection '0'
+
+config dhcp 'lan'
+	option interface 'lan'
+	option start '100'
+	option limit '150'
+	option leasetime '12h'
+
+config dhcp 'wan'
+	option interface 'wan'
+	option ignore '1'
+
+config dhcp 'client'
+	option ignore '1'
+	option interface 'client'
+
+package dropbear
+
+config dropbear
+	option PasswordAuth 'on'
+	option RootPasswordAuth 'on'
+	option Port '22'
+
+package fastd
+
+config fastd 'sample_config'
+	option enabled '0'
+	option syslog_level 'info'
+	list method 'salsa2012+umac'
+	option mode 'tap'
+	option interface 'tap0'
+	option mtu '1426'
+	option forward '0'
+	option secure_handshakes '1'
+
+config peer 'sample_peer'
+	option enabled '0'
+	option net 'sample_config'
+	option key '0000000000000000000000000000000000000000000000000000000000000000'
+
+config peer_group 'sample_group'
+	option enabled '0'
+	option net 'sample_config'
+
+config fastd 'mesh_vpn'
+	option enabled '1'
+	list method 'salsa2012+umac'
+	option mtu '1312'
+	option group 'gluon-fastd'
+	option status_socket '/var/run/fastd.mesh_vpn.socket'
+	option packet_mark '1'
+	option syslog_level 'verbose'
+	option mode 'tap'
+	option secure_handshakes '1'
+	option interface 'mesh-vpn'
+	option secret 'f0cd10397ae9b099ff1f8b6e3a8b56002069190ad5d5424ab4de80c833f39769'
+
+config peer_group 'mesh_vpn_backbone'
+	option enabled '1'
+	option peer_limit '1'
+	option net 'mesh_vpn'
+
+config peer 'mesh_vpn_backbone_peer_peer2'
+	option enabled '1'
+	option key '3e01de6c771cf5a50375de4f05e51f7d9251b5659ab9fb54040bf41df411ae46'
+	option net 'mesh_vpn'
+	list remote 'ipv4 "vpn2.kbu.freifunk.net" port 10010'
+	list remote 'ipv4 "vpn2.ffkbu.de" port 10010'
+	option group 'mesh_vpn_backbone'
+
+config peer 'mesh_vpn_backbone_peer_peer3'
+	option enabled '1'
+	option key 'c46d7e141b60be6e57ada3087f1b25beb0bfb51e6b42d1c7f02a067d89c13a1a'
+	option net 'mesh_vpn'
+	list remote 'ipv4 "vpn3.kbu.freifunk.net" port 10010'
+	list remote 'ipv4 "vpn3.ffkbu.de" port 10010'
+	option group 'mesh_vpn_backbone'
+
+config peer 'mesh_vpn_backbone_peer_peer6'
+	option enabled '1'
+	option key 'f125456692a9804885ebc33375d0de6ac934b317fc45682849019704d8ee830d'
+	option net 'mesh_vpn'
+	list remote 'ipv4 "vpn6.kbu.freifunk.net" port 10009'
+	list remote 'ipv4 "vpn6.ffkbu.de" port 10009'
+	option group 'mesh_vpn_backbone'
+
+config peer 'mesh_vpn_backbone_peer_peer1'
+	option enabled '1'
+	option key 'ae120edbbd07dce57c2ed6ebefd112886a1416322e7a98352866eed1e0d633cc'
+	option net 'mesh_vpn'
+	list remote 'ipv4 "vpn1.kbu.freifunk.net" port 10010'
+	list remote 'ipv4 "vpn1.ffkbu.de" port 10010'
+	option group 'mesh_vpn_backbone'
+
+config peer 'mesh_vpn_backbone_peer_peer8'
+	option enabled '1'
+	option key 'f9dddb5a3f184fc3b10a6b16205c2392be4d11ae0af4901cb901f7f0d103333a'
+	option net 'mesh_vpn'
+	list remote 'ipv4 "vpn8.kbu.freifunk.net" port 10009'
+	list remote 'ipv4 "vpn8.ffkbu.de" port 10009'
+	option group 'mesh_vpn_backbone'
+
+config peer 'mesh_vpn_backbone_peer_peer5'
+	option enabled '1'
+	option key 'a6df938cfde83b437346c91e2e548516a25321fb72820f9f757d9479240e26af'
+	option net 'mesh_vpn'
+	list remote 'ipv4 "vpn5.kbu.freifunk.net" port 10009'
+	list remote 'ipv4 "vpn5.ffkbu.de" port 10009'
+	option group 'mesh_vpn_backbone'
+
+config peer 'mesh_vpn_backbone_peer_peer7'
+	option enabled '1'
+	option key '389e8ebdf7a7329279b2eb006bd3cf92691eb26f3518e1c596b8634c9f0a3002'
+	option net 'mesh_vpn'
+	list remote 'ipv4 "vpn7.kbu.freifunk.net" port 10009'
+	list remote 'ipv4 "vpn7.ffkbu.de" port 10009'
+	option group 'mesh_vpn_backbone'
+
+config peer 'mesh_vpn_backbone_peer_peer4'
+	option enabled '1'
+	option key 'f4aff2422921822102ed6e67807b0b5db334f04e071356d30fe6c927b8bb9839'
+	option net 'mesh_vpn'
+	list remote 'ipv4 "vpn4.kbu.freifunk.net" port 10010'
+	list remote 'ipv4 "vpn4.ffkbu.de" port 10010'
+	option group 'mesh_vpn_backbone'
+
+package firewall
+
+config defaults
+	option syn_flood '1'
+	option input 'ACCEPT'
+	option output 'ACCEPT'
+	option forward 'REJECT'
+
+config zone
+	option name 'lan'
+	list network 'lan'
+	option input 'ACCEPT'
+	option output 'ACCEPT'
+	option forward 'ACCEPT'
+
+config zone
+	option name 'wan'
+	list network 'wan'
+	list network 'wan6'
+	option input 'REJECT'
+	option output 'ACCEPT'
+	option forward 'REJECT'
+	option masq '1'
+	option mtu_fix '1'
+	option conntrack '1'
+
+config forwarding
+	option src 'lan'
+	option dest 'wan'
+
+config rule
+	option name 'Allow-DHCP-Renew'
+	option src 'wan'
+	option proto 'udp'
+	option dest_port '68'
+	option target 'ACCEPT'
+	option family 'ipv4'
+
+config rule
+	option name 'Allow-Ping'
+	option src 'wan'
+	option proto 'icmp'
+	option icmp_type 'echo-request'
+	option family 'ipv4'
+	option target 'ACCEPT'
+
+config rule
+	option name 'Allow-IGMP'
+	option src 'wan'
+	option proto 'igmp'
+	option family 'ipv4'
+	option target 'ACCEPT'
+
+config rule
+	option name 'Allow-DHCPv6'
+	option src 'wan'
+	option proto 'udp'
+	option src_ip 'fe80::/10'
+	option src_port '547'
+	option dest_ip 'fe80::/10'
+	option dest_port '546'
+	option family 'ipv6'
+	option target 'ACCEPT'
+
+config rule
+	option name 'Allow-MLD'
+	option src 'wan'
+	option proto 'icmp'
+	option src_ip 'fe80::/10'
+	list icmp_type '130/0'
+	list icmp_type '131/0'
+	list icmp_type '132/0'
+	list icmp_type '143/0'
+	option family 'ipv6'
+	option target 'ACCEPT'
+
+config rule
+	option name 'Allow-ICMPv6-Input'
+	option src 'wan'
+	option proto 'icmp'
+	list icmp_type 'echo-request'
+	list icmp_type 'echo-reply'
+	list icmp_type 'destination-unreachable'
+	list icmp_type 'packet-too-big'
+	list icmp_type 'time-exceeded'
+	list icmp_type 'bad-header'
+	list icmp_type 'unknown-header-type'
+	list icmp_type 'router-solicitation'
+	list icmp_type 'neighbour-solicitation'
+	list icmp_type 'router-advertisement'
+	list icmp_type 'neighbour-advertisement'
+	option limit '1000/sec'
+	option family 'ipv6'
+	option target 'ACCEPT'
+
+config rule
+	option name 'Allow-ICMPv6-Forward'
+	option src 'wan'
+	option dest '*'
+	option proto 'icmp'
+	list icmp_type 'echo-request'
+	list icmp_type 'echo-reply'
+	list icmp_type 'destination-unreachable'
+	list icmp_type 'packet-too-big'
+	list icmp_type 'time-exceeded'
+	list icmp_type 'bad-header'
+	list icmp_type 'unknown-header-type'
+	option limit '1000/sec'
+	option family 'ipv6'
+	option target 'ACCEPT'
+
+config include
+	option path '/etc/firewall.user'
+
+config rule
+	option src 'wan'
+	option dest 'lan'
+	option proto 'esp'
+	option target 'ACCEPT'
+
+config rule
+	option src 'wan'
+	option dest 'lan'
+	option dest_port '500'
+	option proto 'udp'
+	option target 'ACCEPT'
+
+config rule 'wan_igmp'
+	option src 'wan'
+	option name 'Allow-IGMP'
+	option family 'ipv4'
+	option target 'ACCEPT'
+	option proto 'igmp'
+
+config rule 'wan_mld'
+	list icmp_type '130/0'
+	list icmp_type '131/0'
+	list icmp_type '132/0'
+	list icmp_type '143/0'
+	option src 'wan'
+	option name 'Allow-MLD'
+	option src_ip 'fe80::/10'
+	option family 'ipv6'
+	option target 'ACCEPT'
+	option proto 'icmp'
+
+config rule 'wan_ssh'
+	option dest_port '22'
+	option src 'wan'
+	option name 'wan_ssh'
+	option target 'ACCEPT'
+	option proto 'tcp'
+
+config zone 'client'
+	option name 'client'
+	option input 'ACCEPT'
+	option forward 'REJECT'
+	list network 'client'
+	option output 'ACCEPT'
+
+config rule 'client_dns'
+	option dest_port '53'
+	option src 'client'
+	option name 'client_dns'
+	option target 'REJECT'
+
+config include 'mesh_vpn_dns'
+	option family 'ipv4'
+	option type 'restore'
+	option path '/lib/gluon/mesh-vpn-fastd/iptables.rules'
+
+config rule 'wan_respondd_reply'
+	option src_port '1001'
+	option src 'wan'
+	option name 'wan_respondd_reply'
+	option src_ip 'fe80::/64'
+	option target 'ACCEPT'
+	option proto 'udp'
+	option dest_port '32768:61000'
+
+config zone 'local_node'
+	option name 'local_node'
+	option input 'ACCEPT'
+	option forward 'REJECT'
+	list network 'local_node'
+	option output 'ACCEPT'
+
+config rule 'wan_respondd'
+	option dest_port '1001'
+	option src 'wan'
+	option name 'wan_respondd'
+	option src_ip 'fe80::/64'
+	option target 'ACCEPT'
+	option proto 'udp'
+
+config rule 'client_respondd'
+	option dest_port '1001'
+	option src 'client'
+	option name 'client_respondd'
+	option src_ip '!fe80::/64'
+	option target 'REJECT'
+	option proto 'udp'
+
+package fstab
+
+config global
+	option anon_swap '0'
+	option anon_mount '0'
+	option auto_swap '1'
+	option auto_mount '1'
+	option delay_root '5'
+	option check_fs '0'
+
+package gluon-core
+
+config wireless
+
+package gluon-node-info
+
+config location
+	option share_location '1'
+	option latitude '50.8560524'
+	option longitude '6.8934968'
+	option altitude '6'
+
+config owner
+	option contact 'cpietsch@gmail.com'
+
+config system
+
+package gluon-setup-mode
+
+config setup_mode
+	option enabled '0'
+	option configured '1'
+
+package gluon-wan-dnsmasq
+
+config static
+
+package luci
+
+config core 'main'
+	option lang 'auto'
+	option mediaurlbase '/luci-static/bootstrap'
+	option resourcebase '/luci-static/resources'
+
+config extern 'flash_keep'
+	option uci '/etc/config/'
+	option dropbear '/etc/dropbear/'
+	option openvpn '/etc/openvpn/'
+	option passwd '/etc/passwd'
+	option opkg '/etc/opkg.conf'
+	option firewall '/etc/firewall.user'
+	option uploads '/lib/uci/upload/'
+
+config internal 'languages'
+	option de 'Deutsch (German)'
+	option en 'English'
+
+config internal 'sauth'
+	option sessionpath '/tmp/luci-sessions'
+	option sessiontime '3600'
+
+config internal 'ccache'
+	option enable '1'
+
+config internal 'themes'
+	option Gluon '/luci-static/gluon'
+
+package network
+
+config interface 'loopback'
+	option ifname 'lo'
+	option proto 'static'
+	option ipaddr '127.0.0.1'
+	option netmask '255.0.0.0'
+
+config globals 'globals'
+	option ula_prefix 'fda9:3fb2:dcbb::/48'
+
+config interface 'wan6'
+	option proto 'dhcpv6'
+	option sourcefilter '0'
+	option ifname 'br-wan'
+	option ip6table '1'
+	option peerdns '0'
+
+config switch
+	option name 'switch0'
+	option reset '1'
+	option enable_vlan '1'
+	option blinkrate '2'
+
+config switch_vlan
+	option device 'switch0'
+	option vlan '1'
+	option ports '0 1 2 3 5t'
+
+config switch_port
+	option device 'switch0'
+	option port '1'
+	option led '6'
+
+config switch_port
+	option device 'switch0'
+	option port '2'
+	option led '9'
+
+config switch_port
+	option device 'switch0'
+	option port '5'
+	option led '2'
+
+config interface 'wan'
+	option multicast_querier '0'
+	option peerdns '0'
+	option auto '1'
+	option type 'bridge'
+	option proto 'dhcp'
+	option macaddr '2e:17:95:c3:87:f0'
+	list ifname 'eth1'
+	list ifname 'eth0.1'
+
+config rule6 'wan6_lookup'
+	option mark '0x01/0x01'
+	option lookup '1'
+
+config route6 'wan6_unreachable'
+	option type 'unreachable'
+	option table '1'
+	option target '::/0'
+	option metric '65535'
+	option gateway '::'
+	option interface 'loopback'
+
+config interface 'ibss_radio0'
+	option proto 'gluon_mesh'
+
+config interface 'ibss_radio1'
+	option proto 'gluon_mesh'
+
+config interface 'mesh_wan'
+	option ifname 'br-wan'
+	option auto '0'
+	option transitive '1'
+	option fixed_mtu '1'
+	option proto 'gluon_mesh'
+
+config interface 'mesh_lan'
+	option igmp_snooping '0'
+	option ifname 'eth0.1'
+	option transitive '1'
+	option fixed_mtu '1'
+	option proto 'gluon_mesh'
+	option type 'bridge'
+	option auto '0'
+	option macaddr '2e:17:95:c3:87:f4'
+
+config interface 'client'
+	option type 'bridge'
+	option macaddr 'c4:3d:c7:af:07:3d'
+	list ifname 'bat0'
+	option proto 'dhcpv6'
+	option reqprefix 'no'
+	option robustness '3'
+	option query_interval '2000'
+	option query_response_interval '500'
+	option peerdns '1'
+	option sourcefilter '0'
+
+config interface 'bat0'
+	option multicast_router '2'
+	option ifname 'bat0'
+	option macaddr 'c4:3d:c7:af:07:3d'
+	option learning '1'
+	option proto 'none'
+
+config interface 'mesh_vpn'
+	option ifname 'mesh-vpn'
+	option transitive '1'
+	option macaddr '2e:17:95:c3:87:f7'
+	option fixed_mtu '1'
+	option proto 'gluon_mesh'
+
+config device 'local_node_dev'
+	option macaddr '16:42:23:20:15:69'
+	option ifname 'br-client'
+	option name 'local-node'
+	option type 'macvlan'
+
+config interface 'local_node'
+	option ifname 'local-node'
+	option ipaddr '10.158.0.3'
+	option ip6addr 'fdd3:5d16:b5dd:01fc::01fc/128'
+	option netmask '255.255.192.0'
+	option proto 'static'
+
+config route6 'local_node_route6'
+	option target 'fdd3:5d16:b5dd:01fc::/64'
+	option gateway '::'
+	option interface 'client'
+
+package simple-tc
+
+config interface 'example'
+	option enabled '0'
+	option ifname 'eth0'
+	option limit_egress '1000'
+	option limit_ingress '5000'
+
+config interface 'mesh_vpn'
+	option ifname 'mesh-vpn'
+	option limit_egress '384'
+	option enabled '1'
+	option limit_ingress '1000'
+
+package socat
+
+config socat 'http'
+	option enable '0'
+	option SocatOptions '-d -d TCP6-LISTEN:8000,fork TCP4:192.168.1.20:80'
+
+package system
+
+config system
+	option timezone 'CET-1CEST,M3.5.0,M10.5.0/3'
+	option hostname 'ffkbuk-fischenich'
+
+config timeserver 'ntp'
+	option enabled '1'
+	option enable_server '0'
+	list server '2.pool.ntp.org'
+	list server '0.openwrt.pool.ntp.org'
+	list server '1.openwrt.pool.ntp.org'
+	list server '2.openwrt.pool.ntp.org'
+	list server '3.openwrt.pool.ntp.org'
+
+config led 'led_wan'
+	option name 'WAN LED (green)'
+	option sysfs 'netgear:green:wan'
+	option default '0'
+
+config led 'led_usb'
+	option name 'USB'
+	option sysfs 'netgear:green:usb'
+	option trigger 'usbdev'
+	option dev '1-1'
+	option interval '50'
+
+package ucitrack
+
+config network
+	option init 'network'
+	list affects 'dhcp'
+	list affects 'radvd'
+
+config wireless
+	list affects 'network'
+
+config firewall
+	option init 'firewall'
+	list affects 'luci-splash'
+	list affects 'qos'
+	list affects 'miniupnpd'
+
+config olsr
+	option init 'olsrd'
+
+config dhcp
+	option init 'dnsmasq'
+	list affects 'odhcpd'
+
+config odhcpd
+	option init 'odhcpd'
+
+config dropbear
+	option init 'dropbear'
+
+config httpd
+	option init 'httpd'
+
+config fstab
+	option init 'fstab'
+
+config qos
+	option init 'qos'
+
+config system
+	option init 'led'
+	list affects 'luci_statistics'
+
+config luci_splash
+	option init 'luci_splash'
+
+config upnpd
+	option init 'miniupnpd'
+
+config ntpclient
+	option init 'ntpclient'
+
+config samba
+	option init 'samba'
+
+config tinyproxy
+	option init 'tinyproxy'
+
+package uhttpd
+
+config uhttpd 'main'
+	option redirect_https '1'
+	option rfc1918_filter '1'
+	option max_connections '100'
+	option cert '/etc/uhttpd.crt'
+	option key '/etc/uhttpd.key'
+	option cgi_prefix '/cgi-bin'
+	option script_timeout '60'
+	option network_timeout '30'
+	option http_keepalive '20'
+	option tcp_keepalive '1'
+	list listen_http '0.0.0.0:80'
+	list listen_http '[::]:80'
+	option home '/lib/gluon/status-page/www'
+	option max_requests '32'
+
+config cert 'px5g'
+	option days '730'
+	option bits '1024'
+	option country 'ZZ'
+	option state 'Somewhere'
+	option location 'Uknown'
+	option commonname 'OpenWrt'
+
+package vnstat
+
+config vnstat
+	list interface 'br-lan'
+	list interface 'eth1'
+
+package wireless
+
+config wifi-device 'radio0'
+	option type 'mac80211'
+	option hwmode '11g'
+	option path 'pci0000:00/0000:00:11.0'
+	option htmode 'HT20'
+	option channel '1'
+	option country 'DE'
+
+config wifi-device 'radio1'
+	option type 'mac80211'
+	option hwmode '11a'
+	option path 'pci0000:00/0000:00:12.0'
+	option htmode 'HT20'
+	option channel '44'
+	option country 'DE'
+
+config wifi-iface 'ibss_radio0'
+	option ifname 'ibss0'
+	option network 'ibss_radio0'
+	option device 'radio0'
+	option bssid '02:d2:22:01:fc:22'
+	option disabled '0'
+	option mcast_rate '12000'
+	option mode 'adhoc'
+	option macaddr '2e:17:95:c3:87:f2'
+	option ssid '02:d2:22:01:fc:22'
+
+config wifi-iface 'ibss_radio1'
+	option ifname 'ibss1'
+	option network 'ibss_radio1'
+	option device 'radio1'
+	option bssid '02:d2:22:01:fc:23'
+	option disabled '0'
+	option mcast_rate '12000'
+	option mode 'adhoc'
+	option macaddr '2e:17:95:c3:87:f6'
+	option ssid '02:d2:22:01:fc:23'
+
+config wifi-iface 'client_radio0'
+	option ifname 'client0'
+	option network 'client'
+	option disabled '0'
+	option device 'radio0'
+	option mode 'ap'
+	option macaddr '2e:17:95:c3:87:f0'
+	option ssid 'kbu.freifunk.net'
+
+config wifi-iface 'client_radio1'
+	option ifname 'client1'
+	option network 'client'
+	option disabled '0'
+	option device 'radio1'
+	option mode 'ap'
+	option macaddr 'c4:3d:c7:af:07:3f'
+	option ssid 'kbu.freifunk.net'
+
